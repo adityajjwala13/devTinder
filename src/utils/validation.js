@@ -10,4 +10,29 @@ const validateSignUpData = (req) => {
   if (!validator.isStrongPassword(password))
     throw new Error("Please enter strong password");
 };
-module.exports = { validateSignUpData };
+
+const validateEditProfileData = (req) => {
+  const allowedEditFields = ["firstName", "age", "gender"];
+  const reqBodyFields = Object.keys(req.body);
+  reqBodyFields.forEach((field) => {
+    if (!allowedEditFields.includes(field))
+      throw new Error("Invalid Edit Request");
+  });
+};
+
+const validateEditPassword = async (req) => {
+  const { currentPassword, newPassword } = req.body;
+  const isCurrentPasswordCorrect = await req.user.validatePassword(
+    currentPassword
+  );
+  if (!isCurrentPasswordCorrect)
+    throw new Error("Current password is incorrect!!");
+  if (!validator.isStrongPassword(newPassword))
+    throw new Error("Please enter strong password");
+};
+
+module.exports = {
+  validateSignUpData,
+  validateEditProfileData,
+  validateEditPassword,
+};
