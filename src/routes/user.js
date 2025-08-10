@@ -2,6 +2,7 @@ const express = require("express");
 const { authMiddle } = require("../middlewares/auth");
 const userRouter = express.Router();
 const ConnectionRequest = require("../models/connectionRequest");
+const User = require("../models/user");
 
 //Get all the pending connection request for the loggedInUser
 userRouter.get("/user/requests/received", authMiddle, async (req, res) => {
@@ -50,11 +51,37 @@ userRouter.get("/user/connections", authMiddle, async (req, res) => {
   }
 });
 
-// userRouter.get("/feed", authMiddle, async (req, res) => {
-//   try {
-//   } catch (error) {
-//     res.status(400).json({ message: error.message });
-//   }
-// });
+userRouter.get("/feed", authMiddle, async (req, res) => {
+  try {
+    const loggedInUser = req.user;
+    const page = parseInt(req.query.page) || 1;
+    let limit = parseInt(req.query.limit) || 10;
+    limit = limit > 60 ? 60 : limit;
+    const skip = (page - 1) * limit;
+
+    const connectionRequests = await ConnectionRequest.find({
+      $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
+    }).select("fromUserId toUserId");
+
+    const blockedUsers = new Set();
+    connectionRequests.forEach((user) => {
+      blockedUsers.add(user.fromUserId.toString());
+      blockedUsers.add(user.toUserId.toString());
+    });
+    const reqUsers = await User.find({
+      $and: [
+        { _id: { $nin: Array.from(blockedUsers) } },
+        { _id: { $ne: loggedInUser._id } },
+      ],
+    })
+      .select("firstName lastName age")
+      .skip(skip)
+      .limit(limit);
+
+    res.status(200).json({ data: reqUsers });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+});
 
 module.exports = userRouter;
