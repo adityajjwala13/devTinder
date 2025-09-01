@@ -4,7 +4,7 @@ const authMiddle = async (req, res, next) => {
   try {
     //Token validation
     const { token } = req.cookies;
-    if (!token) throw new Error("Invalid token🙂");
+    if (!token) return res.status(401).send("Please Login!");
     const verifyJWT = jwt.verify(token, "aDish@123");
     const { _id } = verifyJWT;
     const findUser = await user.findById(_id);

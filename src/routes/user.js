@@ -61,7 +61,7 @@ userRouter.get("/feed", authMiddle, async (req, res) => {
 
     const connectionRequests = await ConnectionRequest.find({
       $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
-    }).select("fromUserId toUserId");
+    }).select("fromUserId toUserId age gender photoURL about");
 
     const blockedUsers = new Set();
     connectionRequests.forEach((user) => {
@@ -74,7 +74,7 @@ userRouter.get("/feed", authMiddle, async (req, res) => {
         { _id: { $ne: loggedInUser._id } },
       ],
     })
-      .select("firstName lastName age")
+      .select("firstName lastName age gender photoURL about")
       .skip(skip)
       .limit(limit);
 

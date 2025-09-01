@@ -1,10 +1,9 @@
 const express = require("express");
 // const jwt = require("jsonwebtoken");
-
 const app = express();
 const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
-
+const cors = require("cors");
 // // app.use("/test", (req, res) => res.send("We r here for testing"));
 // // app.use("/hello", (req, res) => res.send("Hello Dude"));
 // app.use("/admin", authMiddle);
@@ -25,6 +24,12 @@ const cookieParser = require("cookie-parser");
 // );
 
 // middlewares
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 app.use(express.json());
 app.use(cookieParser());
 

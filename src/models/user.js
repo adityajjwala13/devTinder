@@ -13,6 +13,9 @@ const userSchema = Schema(
     lastName: {
       type: String,
     },
+    photoURL: {
+      type: String,
+    },
     age: {
       type: Number,
     },
@@ -39,6 +42,9 @@ const userSchema = Schema(
         if (!["male", "female", "others"].includes(val))
           throw new Error("Gender validation failed");
       },
+    },
+    about: {
+      type: String,
     },
   },
   {
