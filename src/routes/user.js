@@ -14,10 +14,21 @@ userRouter.get("/user/requests/received", authMiddle, async (req, res) => {
     })
       // .populate("fromUserId", ["firstName", "lastName"]);
       // OR
-      .populate("fromUserId", "firstName lastName");
+      .populate("fromUserId", [
+        "firstName",
+        "lastName",
+        "about",
+        "gender",
+        "photoURL",
+        "age",
+      ]);
 
-    if (!connectionRequests.length)
-      return res.status(404).send("No pending connection request found");
+    if (!connectionRequests.length) {
+      return res.status(200).json({
+        message: "No pending connection requests found",
+        data: [],
+      });
+    }
     res
       .status(200)
       .json({ message: "Data fetched successfully", data: connectionRequests });
@@ -33,10 +44,28 @@ userRouter.get("/user/connections", authMiddle, async (req, res) => {
       status: "accepted",
       $or: [{ fromUserId: loggedInUser._id }, { toUserId: loggedInUser._id }],
     })
-      .populate("fromUserId", ["firstName", "lastName"])
-      .populate("toUserId", ["firstName", "lastName"]);
-    if (!connections.length)
-      return res.status(404).send("No connections still..😥");
+      .populate("fromUserId", [
+        "firstName",
+        "lastName",
+        "about",
+        "gender",
+        "photoURL",
+        "age",
+      ])
+      .populate("toUserId", [
+        "firstName",
+        "lastName",
+        "about",
+        "gender",
+        "photoURL",
+        "age",
+      ]);
+    if (!connections.length) {
+      return res.status(200).json({
+        message: "No connections yet 😥",
+        data: [],
+      });
+    }
     const filteredConnectionsFields = connections.map((row) =>
       row.fromUserId._id.equals(loggedInUser._id)
         ? row.toUserId

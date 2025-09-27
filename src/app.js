@@ -26,7 +26,8 @@ const cors = require("cors");
 // middlewares
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    // origin: "http://localhost:5174",
+    origin: "http://51.20.7.213/",
     credentials: true,
   })
 );

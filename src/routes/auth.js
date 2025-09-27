@@ -6,18 +6,16 @@ const bcrypt = require("bcrypt");
 const { validateSignUpData } = require("../utils/validation");
 authRouter.post("/signup", async (req, res) => {
   try {
-    // const userObj = {
-    //   firstName: "Ram",
-    //   lastName: "Agarwal",
-    //   age: 27,
-    //   email: "ram@gmail.com",
-    //   password: "33234453",
-    // };
-
     //Validation of req body initially
     validateSignUpData(req);
-    //if validation passes successfully then password is encrypted
-    const { firstName, lastName, emailId, password } = req.body;
+
+    //fter validation is passed then "already existing account" check is done
+    const doUserExist = await user.findOne({ emailId: req.body.emailId });
+    if (doUserExist)
+      res.status(409).send("User already registered. Please log in instead!!");
+
+    //if all validation passes successfully then password is encrypted
+    const { password } = req.body;
     const passwordEncrypted = await bcrypt.hash(password, 10);
 
     // Now creating new instance of model user
@@ -25,8 +23,15 @@ authRouter.post("/signup", async (req, res) => {
       ...req.body,
       password: passwordEncrypted,
     });
-    await User.save();
-    res.send("User added successfully");
+    const savedUser = await User.save();
+    const jwtToken = savedUser.getJWT(); //Using Schema methods
+
+    res.cookie("token", jwtToken, {
+      expires: new Date(Date.now() + 6 * 3600000),
+    });
+    res
+      .status(200)
+      .json({ message: "User registered successfully", data: savedUser });
   } catch (error) {
     res.status(400).send("ERROR: " + error.message);
   }
@@ -57,7 +62,9 @@ authRouter.post("/login", async (req, res) => {
     res.cookie("token", jwtToken, {
       expires: new Date(Date.now() + 6 * 3600000),
     });
-    res.status(200).json(UserPresent);
+    res
+      .status(200)
+      .json({ message: "User loggedIn successfully", data: UserPresent });
   } catch (error) {
     res.status(400).send("Error : " + error.message);
   }
