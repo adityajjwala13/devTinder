@@ -4,6 +4,8 @@ const app = express();
 const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
+require("dotenv").config();
+
 // // app.use("/test", (req, res) => res.send("We r here for testing"));
 // // app.use("/hello", (req, res) => res.send("Hello Dude"));
 // app.use("/admin", authMiddle);
@@ -26,8 +28,8 @@ const cors = require("cors");
 // middlewares
 app.use(
   cors({
-    // origin: "http://localhost:5174",
-    origin: "http://51.20.7.213",
+    origin: "http://localhost:5173",
+    // origin: "http://51.20.7.213",
     credentials: true,
   })
 );
@@ -104,7 +106,7 @@ app.use("/", userRouter);
 connectDB()
   .then(() => {
     console.log("Database connection established....");
-    app.listen(7777, () =>
+    app.listen(process.env.PORT, () =>
       console.log("Server started listening on port 7777....")
     );
   })
