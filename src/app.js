@@ -1,10 +1,10 @@
+require("dotenv").config();
 const express = require("express");
 // const jwt = require("jsonwebtoken");
 const app = express();
 const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
-require("dotenv").config();
 
 // // app.use("/test", (req, res) => res.send("We r here for testing"));
 // // app.use("/hello", (req, res) => res.send("Hello Dude"));
@@ -107,7 +107,7 @@ connectDB()
   .then(() => {
     console.log("Database connection established....");
     app.listen(process.env.PORT, () =>
-      console.log("Server started listening on port 7777....")
+      console.log(`Server started listening on port ${process.env.PORT}....`)
     );
   })
   .catch((err) => console.log("Database cannot be connected!!🥲"));
