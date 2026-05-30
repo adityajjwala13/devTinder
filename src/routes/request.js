@@ -4,6 +4,8 @@ const { authMiddle } = require("../middlewares/auth");
 const ConnectionRequest = require("../models/connectionRequest");
 const user = require("../models/user");
 
+const sendEmail = require("../utils/ses_sendemail");
+
 requestRouter.post(
   "/request/send/:status/:toUserId",
   authMiddle,
@@ -44,6 +46,13 @@ requestRouter.post(
           ? `${req.user.firstName} is interested in ${isReceiverExists.firstName}`
           : `${req.user.firstName} ignored ${isReceiverExists.firstName}`;
       const data = await connectionRequest.save();
+
+      const emailRes = await sendEmail.run(
+        "Received message from codetinder",
+        mssg
+      );
+      // console.log(emailRes);
+
       res.status(200).json({ message: mssg, data });
     } catch (error) {
       res.status(400).send("ERROR: " + error.message);

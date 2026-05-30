@@ -49,7 +49,7 @@ const userSchema = Schema(
   },
   {
     timestamps: true,
-  }
+  },
 );
 
 userSchema.methods.validatePassword = async function (passwordInputByUser) {
@@ -58,7 +58,7 @@ userSchema.methods.validatePassword = async function (passwordInputByUser) {
   const passwordHash = user.password;
   const isPasswordCorrect = await bcrypt.compare(
     passwordInputByUser,
-    passwordHash
+    passwordHash,
   );
   return isPasswordCorrect;
 };

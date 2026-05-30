@@ -6,6 +6,8 @@ const connectDB = require("./config/database");
 const cookieParser = require("cookie-parser");
 const cors = require("cors");
 
+require("./utils/cronjob");
+
 // // app.use("/test", (req, res) => res.send("We r here for testing"));
 // // app.use("/hello", (req, res) => res.send("Hello Dude"));
 // app.use("/admin", authMiddle);
